@@ -12,7 +12,7 @@ export class UserController {
     ) {}
 
 
-  @Post()
+  @Post('create-user')
   async createUser(@Body() createUsersDTO: CreateUsersDTO){
     return await this.commandBus.execute(new CreateUsersCommand(createUsersDTO))
   }
