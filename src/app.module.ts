@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ValidationPipe } from './pipes/validation.pipe';
+import { UsersEntity } from './users/entities/users.entity';
 import { UsersModule } from './users/users.module';
 
 @Module({
@@ -20,7 +21,9 @@ import { UsersModule } from './users/users.module';
         username: configService.get('DATABASE_USERNAME'),
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
-        entities: [],
+        entities: [
+          UsersEntity
+        ],
         synchronize: false,
       }),
     }),

@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs';
 import { Repository } from 'typeorm';
-import { UserEntity } from '../../entities/users.entity';
+import { UsersEntity } from '../../entities/users.entity';
 import { CreateUsersCommand } from './create-user.command';
 import { randomBytes, pbkdf2Sync } from 'crypto';
 import { CreatedUserReponseObject } from '../../dto/create-users-response.dto';
@@ -10,8 +10,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 @CommandHandler(CreateUsersCommand)
 export class CreateUsersHandler implements ICommandHandler<CreateUsersCommand> {
   constructor(
-    @InjectRepository(UserEntity)
-    private usersRepository: Repository<UserEntity>
+    @InjectRepository(UsersEntity)
+    private usersRepository: Repository<UsersEntity>
     ) {}
 
   async execute(
@@ -32,7 +32,11 @@ export class CreateUsersHandler implements ICommandHandler<CreateUsersCommand> {
       salt,
     });
     await this.usersRepository.save(user);
-    return;
+    return new CreatedUserReponseObject({
+        status: 'success',
+        message: "user created successfully",
+        responseCode: 201
+    });
   }
   async checkDuplicateEmail(email: string) {
     const user = await this.usersRepository.findOne({ where: { email } });
