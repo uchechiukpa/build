@@ -27,7 +27,11 @@ export class CreateUserTable1687815282198 implements MigrationInterface {
                     },
                     {
                         name:"displayPicture",
-                        type: "blob"
+                        type: "varchar"
+                    },
+                    {
+                        name: "bio",
+                        type: "text",
                     },
                     {
                         name: "role",
