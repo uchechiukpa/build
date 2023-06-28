@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { UsersEntity } from '../../entities/users.entity';
 import { CreateUsersCommand } from './create-user.command';
 import { randomBytes, pbkdf2Sync } from 'crypto';
-import { CreatedUserReponseObject } from '../../dto/create-users-response.dto';
+import { CreatedUserReponseObject } from '../../dto/create-users/create-users-response.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @CommandHandler(CreateUsersCommand)
