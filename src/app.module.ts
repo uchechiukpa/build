@@ -7,6 +7,8 @@ import { AppService } from './app.service';
 import { ValidationPipe } from './pipes/validation.pipe';
 import { UsersEntity } from './users/entities/users.entity';
 import { UsersModule } from './users/users.module';
+import { ProjectsModule } from './projects/projects.module';
+import { ProjectEntity } from './projects/entities/project.entity';
 
 @Module({
   imports: [
@@ -22,12 +24,14 @@ import { UsersModule } from './users/users.module';
         password: configService.get('DATABASE_PASSWORD'),
         database: configService.get('DATABASE_NAME'),
         entities: [
-          UsersEntity
+          UsersEntity,
+          ProjectEntity
         ],
         synchronize: false,
       }),
     }),
-    UsersModule
+    UsersModule,
+    ProjectsModule
 
   ],
 

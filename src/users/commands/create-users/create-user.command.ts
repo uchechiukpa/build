@@ -4,4 +4,4 @@ export class CreateUsersCommand {
     constructor(
         public readonly createUsersDto: CreateUsersDTO
     ) {}
-  }
+}
