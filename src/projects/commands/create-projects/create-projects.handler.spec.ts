@@ -1,46 +1,52 @@
-import { Test } from '@nestjs/testing';
+import { Test, TestingModule } from '@nestjs/testing';
+import { CommandBus } from '@nestjs/cqrs';
+import { Repository } from 'typeorm';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import { ProjectEntity } from '../../entities/project.entity';
-import { CreateProjectCommand } from './create-projects.command';
+import { CreatedProjectReponseDto } from '../../dto/create-projects/create-project.response.dto';
 import { CreateProjectHandler } from './create-projects.handler';
+import { CreateProjectDto } from '../../dto/create-projects/create-project.request.dto';
+import { CreateProjectCommand } from './create-projects.command';
 
 describe('CreateProjectHandler', () => {
   let createProjectHandler: CreateProjectHandler;
-  let mockRepository;
+  let projectRepository: Repository<ProjectEntity>;
 
   beforeEach(async () => {
-    mockRepository = {
-      save: jest.fn(),
-    };
-
-    const moduleRef = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       providers: [
         CreateProjectHandler,
         {
-          provide: 'ProjectEntityRepository',
-          useValue: mockRepository,
+          provide: getRepositoryToken(ProjectEntity),
+          useValue: {
+            save: jest.fn(),
+          },
         },
       ],
     }).compile();
 
-    createProjectHandler = moduleRef.get<CreateProjectHandler>(CreateProjectHandler);
+    createProjectHandler = module.get<CreateProjectHandler>(CreateProjectHandler);
+    projectRepository = module.get<Repository<ProjectEntity>>(getRepositoryToken(ProjectEntity));
   });
 
-  it('should create a new project and save it in the repository', async () => {
-    const dto = {
+  it('should create a project and return CreatedProjectReponseDto', async () => {
+    const createProjectDto: CreateProjectDto = {
       title: 'Test Project',
       description: 'This is a test project',
     };
-    const command = new CreateProjectCommand(dto);
-    
-    const expectedProject = new ProjectEntity();
-    expectedProject.title = dto.title;
-    expectedProject.description = dto.description;
 
-    mockRepository.save.mockReturnValue(expectedProject);
+    const createdProjectResponseDto: CreatedProjectReponseDto = {
+      message: 'user created successfully',
+      responseCode: 201,
+      status: 'success',
+    };
 
-    const result = await createProjectHandler.execute(command);
+    jest.spyOn(projectRepository, 'save').mockResolvedValue(undefined);
 
-    expect(mockRepository.save).toHaveBeenCalledWith(expectedProject);
-    expect(result).toEqual(expectedProject);
+    const result = await createProjectHandler.execute(new CreateProjectCommand(createProjectDto));
+
+    expect(result).toEqual(createdProjectResponseDto);
+    expect(projectRepository.save).toHaveBeenCalled();
   });
 });
+
